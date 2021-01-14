@@ -19,9 +19,6 @@ import javax.swing.table.DefaultTableModel;
  */
 public class CRUDclientes extends javax.swing.JFrame {
 
-    /**
-     * Creates new form Principal
-     */
  Conexion con = new Conexion();
     Connection cn;
     Statement st;
@@ -57,7 +54,7 @@ public class CRUDclientes extends javax.swing.JFrame {
     }
       void Agregar(){
           String dni= txtDni.getText();
-          String nombre= txtApellido.getText();
+          String nombre= txtNombre.getText();
           String apellido = txtApellido.getText();
           if (dni.equals("")||nombre.equals("") || apellido.equals("")){
             JOptionPane.showMessageDialog(null, "Los datos están vacios");
@@ -70,6 +67,7 @@ public class CRUDclientes extends javax.swing.JFrame {
                   st.executeUpdate(sql);
                   JOptionPane.showMessageDialog(null, "Usuario agregado");
                   LimpiarTabla();
+                  listar();
               } catch (Exception e) {
                   System.out.println(e);
               }
@@ -77,7 +75,7 @@ public class CRUDclientes extends javax.swing.JFrame {
           }
       }
       void LimpiarTabla(){
-          for (int i=0;i<=TablaDatos.getRowCount();i++)
+          for (int i=0;i<TablaDatos.getRowCount();i++)
                   {
                       modelo.removeRow(i);
                       i=i-1;
@@ -112,9 +110,11 @@ public class CRUDclientes extends javax.swing.JFrame {
         jPanel3 = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
         TablaDatos = new javax.swing.JTable();
+        jButton1 = new javax.swing.JButton();
         goBack = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setResizable(false);
 
         jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder("Datos"));
 
@@ -231,13 +231,27 @@ public class CRUDclientes extends javax.swing.JFrame {
             new String [] {
                 "ID", "Nombre", "Apellido", "DNI"
             }
-        ));
+        ) {
+            boolean[] canEdit = new boolean [] {
+                false, false, false, false
+            };
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        });
         TablaDatos.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 TablaDatosMouseClicked(evt);
             }
         });
         jScrollPane1.setViewportView(TablaDatos);
+        if (TablaDatos.getColumnModel().getColumnCount() > 0) {
+            TablaDatos.getColumnModel().getColumn(0).setResizable(false);
+            TablaDatos.getColumnModel().getColumn(1).setResizable(false);
+            TablaDatos.getColumnModel().getColumn(2).setResizable(false);
+            TablaDatos.getColumnModel().getColumn(3).setResizable(false);
+        }
 
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);
@@ -255,22 +269,32 @@ public class CRUDclientes extends javax.swing.JFrame {
                 .addGap(0, 21, Short.MAX_VALUE))
         );
 
+        jButton1.setText("Remitos");
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel2Layout.createSequentialGroup()
+                        .addContainerGap()
+                        .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(jPanel2Layout.createSequentialGroup()
+                        .addGap(49, 49, 49)
+                        .addComponent(btnAgregar)
+                        .addGap(30, 30, 30)
+                        .addComponent(txtModificar)
+                        .addGap(27, 27, 27)
+                        .addComponent(btnEliminar)
+                        .addGap(34, 34, 34)
+                        .addComponent(jButton1)))
                 .addContainerGap(21, Short.MAX_VALUE))
-            .addGroup(jPanel2Layout.createSequentialGroup()
-                .addGap(49, 49, 49)
-                .addComponent(btnAgregar)
-                .addGap(66, 66, 66)
-                .addComponent(txtModificar)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(btnEliminar)
-                .addGap(82, 82, 82))
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -279,7 +303,8 @@ public class CRUDclientes extends javax.swing.JFrame {
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btnAgregar)
                     .addComponent(txtModificar)
-                    .addComponent(btnEliminar))
+                    .addComponent(btnEliminar)
+                    .addComponent(jButton1))
                 .addGap(18, 18, 18)
                 .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
@@ -319,6 +344,7 @@ public class CRUDclientes extends javax.swing.JFrame {
 
     private void btnAgregarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAgregarActionPerformed
         Agregar();
+        LimpiarTabla();
         listar();
     }//GEN-LAST:event_btnAgregarActionPerformed
 
@@ -340,12 +366,14 @@ public class CRUDclientes extends javax.swing.JFrame {
 
     private void txtModificarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtModificarActionPerformed
        modificar();
-        listar();
+       LimpiarTabla();
+       listar();
     }//GEN-LAST:event_txtModificarActionPerformed
 
     private void btnEliminarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEliminarActionPerformed
-        eliminar();
-        listar();   
+       eliminar();
+       LimpiarTabla();
+        listar();
     }//GEN-LAST:event_btnEliminarActionPerformed
 
     private void goBackActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_goBackActionPerformed
@@ -353,6 +381,10 @@ public class CRUDclientes extends javax.swing.JFrame {
        p.setVisible(true);
        dispose();
     }//GEN-LAST:event_goBackActionPerformed
+
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jButton1ActionPerformed
 void modificar(){
      String dni= txtDni.getText();
      String nombre= txtNombre.getText();
@@ -360,6 +392,7 @@ void modificar(){
      String sql="update persona set DNI='"+dni+"',nombre='"+nombre+"',apellido='"+apellido+"' where id="+id;
      if (dni.equals("")||nombre.equals("") || apellido.equals("")){
             JOptionPane.showMessageDialog(null, "Debe ingresar datos");
+            LimpiarTabla();
             }else{
          try {
              cn=con.getConexion();
@@ -367,6 +400,7 @@ void modificar(){
              st.executeUpdate(sql);
              JOptionPane.showMessageDialog(null, "Usuario actualizado");
              LimpiarTabla();
+             listar();
          } catch (Exception e) {
              System.out.println(e);
          }
@@ -384,6 +418,7 @@ void eliminar(){
             st.executeUpdate(sql);
             JOptionPane.showMessageDialog(null, "Mensaje eliminado con exito");
             LimpiarTabla();
+            listar();
         } catch (Exception e) {
             System.out.println(e);
         }
@@ -430,6 +465,7 @@ void eliminar(){
     private javax.swing.JButton btnAgregar;
     private javax.swing.JButton btnEliminar;
     private javax.swing.JButton goBack;
+    private javax.swing.JButton jButton1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
