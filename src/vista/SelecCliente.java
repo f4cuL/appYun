@@ -60,12 +60,14 @@ public class SelecCliente extends javax.swing.JFrame {
             cn=con.getConexion();
             st=cn.createStatement();
             rs=st.executeQuery(sql);
-            Object[]remito= new Object[3];
+            Object[]remito= new Object[5];
             modelo=(DefaultTableModel)TablaRemito.getModel();
             while (rs.next()){
                 remito[0]=rs.getString("id");
-                remito[1]=rs.getString("fecha");
-                remito[2]=rs.getInt("importe");
+                remito[1]=rs.getString("idcliente");
+                remito[2]=rs.getDate("fecha");
+                remito[3]=rs.getInt("importe");
+                remito[4]=rs.getInt("pagado");
                 modelo.addRow(remito);
             }
         } catch (Exception e) {
@@ -79,13 +81,31 @@ public class SelecCliente extends javax.swing.JFrame {
                 i=i-1;
              }
       }
-      void CentrarPanel(JInternalFrame frame)
-      {
-          ventanaPrincipal.add(frame);
-          Dimension dimension= ventanaPrincipal.getSize();
-          Dimension form= frame.getSize();
-          frame.setLocation(190,30);
-          
+       void AgregarRemito(){
+          String dia= txtDiaremito.getText();
+          String mes= txtMesremito.getText();
+          String anio= txtAnioremito.getText();
+          String importe= txtMesremito.getText();
+          String idCliente = txtIdcliente.getText();
+          String date= anio+"-"+mes+"-"+ dia;
+  
+          if (dia.equals("") || mes.equals("") || anio.equals("") || importe.equals("")){
+            JOptionPane.showMessageDialog(null, "Los datos están vacios");
+            }
+          else{
+              String sql= "insert into remito(fecha,idcliente,importe) values ('"+date+"','"+idCliente+"','"+importe+"')";
+              try {
+                  cn = con.getConexion();
+                  st=cn.createStatement();
+                  st.executeUpdate(sql);
+                  JOptionPane.showMessageDialog(null, "Usuario agregado");
+                  LimpiarTablaRemitos();
+                  listar();
+              } catch (Exception e) {
+                  System.out.println(e);
+              }
+              
+          }
       }
 
     /**
@@ -105,10 +125,21 @@ public class SelecCliente extends javax.swing.JFrame {
         jButton3 = new javax.swing.JButton();
         jButton2 = new javax.swing.JButton();
         jButton1 = new javax.swing.JButton();
-        jButton4 = new javax.swing.JButton();
         jScrollPane1 = new javax.swing.JScrollPane();
         TablaRemito = new javax.swing.JTable();
-        ventanaPrincipal = new javax.swing.JDesktopPane();
+        jPanel3 = new javax.swing.JPanel();
+        txtDiaremito = new javax.swing.JTextField();
+        txtMesremito = new javax.swing.JTextField();
+        txtAnioremito = new javax.swing.JTextField();
+        txtIdremito = new javax.swing.JTextField();
+        jLabel1 = new javax.swing.JLabel();
+        jLabel2 = new javax.swing.JLabel();
+        txtImporteRemito = new javax.swing.JTextField();
+        jLabel3 = new javax.swing.JLabel();
+        jLabel4 = new javax.swing.JLabel();
+        checkPago = new javax.swing.JCheckBox();
+        txtIdcliente = new javax.swing.JTextField();
+        jLabel5 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setResizable(false);
@@ -179,25 +210,18 @@ public class SelecCliente extends javax.swing.JFrame {
             }
         });
 
-        jButton4.setText("Ver remito");
-        jButton4.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton4ActionPerformed(evt);
-            }
-        });
-
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
-                .addComponent(jButton4, javax.swing.GroupLayout.PREFERRED_SIZE, 110, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
+                .addContainerGap()
                 .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 110, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGap(18, 18, 18)
                 .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 110, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
-                .addComponent(jButton3, javax.swing.GroupLayout.PREFERRED_SIZE, 110, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addComponent(jButton3, javax.swing.GroupLayout.PREFERRED_SIZE, 110, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -206,24 +230,22 @@ public class SelecCliente extends javax.swing.JFrame {
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jButton3, javax.swing.GroupLayout.PREFERRED_SIZE, 51, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 51, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 51, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jButton4, javax.swing.GroupLayout.PREFERRED_SIZE, 51, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 51, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(27, Short.MAX_VALUE))
         );
 
         jScrollPane1.setBorder(javax.swing.BorderFactory.createTitledBorder("Remitos"));
 
-        TablaRemito.setBorder(javax.swing.BorderFactory.createTitledBorder("Remitos"));
         TablaRemito.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
 
             },
             new String [] {
-                "ID", "Fecha", "Dni"
+                "ID", "IDcliente", "Fecha", "Importe", "EstadoPago"
             }
         ) {
             boolean[] canEdit = new boolean [] {
-                false, false, false
+                false, false, false, false, false
             };
 
             public boolean isCellEditable(int rowIndex, int columnIndex) {
@@ -240,17 +262,100 @@ public class SelecCliente extends javax.swing.JFrame {
             TablaRemito.getColumnModel().getColumn(0).setResizable(false);
             TablaRemito.getColumnModel().getColumn(1).setResizable(false);
             TablaRemito.getColumnModel().getColumn(2).setResizable(false);
+            TablaRemito.getColumnModel().getColumn(3).setResizable(false);
+            TablaRemito.getColumnModel().getColumn(4).setResizable(false);
         }
 
-        javax.swing.GroupLayout ventanaPrincipalLayout = new javax.swing.GroupLayout(ventanaPrincipal);
-        ventanaPrincipal.setLayout(ventanaPrincipalLayout);
-        ventanaPrincipalLayout.setHorizontalGroup(
-            ventanaPrincipalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 0, Short.MAX_VALUE)
+        txtDiaremito.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                txtDiaremitoActionPerformed(evt);
+            }
+        });
+
+        txtMesremito.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                txtMesremitoActionPerformed(evt);
+            }
+        });
+
+        jLabel1.setText("ID");
+
+        jLabel2.setText("Fecha");
+
+        jLabel3.setText("Importe");
+
+        jLabel4.setText("Estado pago");
+
+        checkPago.setText("pago");
+        checkPago.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                checkPagoActionPerformed(evt);
+            }
+        });
+
+        jLabel5.setText("ID Cliente");
+
+        javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
+        jPanel3.setLayout(jPanel3Layout);
+        jPanel3Layout.setHorizontalGroup(
+            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel3Layout.createSequentialGroup()
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel3Layout.createSequentialGroup()
+                        .addGap(58, 58, 58)
+                        .addComponent(jLabel1)
+                        .addGap(73, 73, 73)
+                        .addComponent(jLabel5))
+                    .addGroup(jPanel3Layout.createSequentialGroup()
+                        .addGap(34, 34, 34)
+                        .addComponent(txtIdremito, javax.swing.GroupLayout.PREFERRED_SIZE, 56, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(jPanel3Layout.createSequentialGroup()
+                        .addGap(19, 19, 19)
+                        .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(jLabel2)
+                            .addComponent(jLabel3)
+                            .addComponent(jLabel4))
+                        .addGap(18, 18, 18)
+                        .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(checkPago)
+                            .addComponent(txtImporteRemito, javax.swing.GroupLayout.PREFERRED_SIZE, 109, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addGroup(jPanel3Layout.createSequentialGroup()
+                                .addComponent(txtDiaremito, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(txtIdcliente, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addGroup(jPanel3Layout.createSequentialGroup()
+                                        .addComponent(txtMesremito, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                        .addComponent(txtAnioremito, javax.swing.GroupLayout.PREFERRED_SIZE, 140, javax.swing.GroupLayout.PREFERRED_SIZE)))))))
+                .addContainerGap(400, Short.MAX_VALUE))
         );
-        ventanaPrincipalLayout.setVerticalGroup(
-            ventanaPrincipalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 295, Short.MAX_VALUE)
+        jPanel3Layout.setVerticalGroup(
+            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel3Layout.createSequentialGroup()
+                .addGap(7, 7, 7)
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel1)
+                    .addComponent(jLabel5))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(txtIdremito, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(txtIdcliente, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(18, 18, 18)
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(txtDiaremito, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(txtMesremito, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(txtAnioremito, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel2))
+                .addGap(18, 18, 18)
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(txtImporteRemito, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel3))
+                .addGap(18, 18, 18)
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel4)
+                    .addComponent(checkPago))
+                .addContainerGap(169, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -268,8 +373,9 @@ public class SelecCliente extends javax.swing.JFrame {
                     .addComponent(jScrollPane1)
                     .addGroup(layout.createSequentialGroup()
                         .addGap(10, 10, 10)
-                        .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                    .addComponent(ventanaPrincipal))
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -282,9 +388,9 @@ public class SelecCliente extends javax.swing.JFrame {
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 103, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(ventanaPrincipal, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(50, 50, 50)
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
 
@@ -309,9 +415,17 @@ public class SelecCliente extends javax.swing.JFrame {
            JOptionPane.showMessageDialog(null,"Usuario no seleccionado");
        }
        else{
-           int id= Integer.parseInt(TablaClientes.getValueAt(fila,0).toString());
-           System.out.println(id);
-           System.out.println(fila);
+           int idRemito = Integer.parseInt(TablaRemito.getValueAt(fila,0).toString());
+           txtIdremito.setText(""+idRemito);
+           int idCliente = Integer.parseInt(TablaRemito.getValueAt(fila,1).toString());
+           txtIdcliente.setText(""+idCliente);
+           Object date = TablaRemito.getValueAt(fila,2);
+           txtAnioremito.setText(""+date);
+           int importe = Integer.parseInt(TablaRemito.getValueAt(fila,3).toString());
+           txtImporteRemito.setText(""+importe);
+           
+         
+           
        }
         
     }//GEN-LAST:event_TablaRemitoMouseClicked
@@ -323,10 +437,7 @@ public class SelecCliente extends javax.swing.JFrame {
     }//GEN-LAST:event_goBackActionPerformed
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-     AgregarRemito ar = new AgregarRemito();
-     ar.setVisible(true);
-     CentrarPanel(ar);
-     
+
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
@@ -337,9 +448,17 @@ public class SelecCliente extends javax.swing.JFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_jButton3ActionPerformed
 
-    private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
+    private void txtDiaremitoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtDiaremitoActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_jButton4ActionPerformed
+    }//GEN-LAST:event_txtDiaremitoActionPerformed
+
+    private void txtMesremitoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtMesremitoActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txtMesremitoActionPerformed
+
+    private void checkPagoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_checkPagoActionPerformed
+        System.out.println("vista.SelecCliente.checkPagoActionPerformed()");
+    }//GEN-LAST:event_checkPagoActionPerformed
 
     /**
      * @param args the command line arguments
@@ -380,15 +499,26 @@ public class SelecCliente extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JTable TablaClientes;
     private javax.swing.JTable TablaRemito;
+    private javax.swing.JCheckBox checkPago;
     private javax.swing.JButton goBack;
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;
     private javax.swing.JButton jButton3;
-    private javax.swing.JButton jButton4;
+    private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel jLabel4;
+    private javax.swing.JLabel jLabel5;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
+    private javax.swing.JPanel jPanel3;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
-    private javax.swing.JDesktopPane ventanaPrincipal;
+    private javax.swing.JTextField txtAnioremito;
+    private javax.swing.JTextField txtDiaremito;
+    private javax.swing.JTextField txtIdcliente;
+    private javax.swing.JTextField txtIdremito;
+    private javax.swing.JTextField txtImporteRemito;
+    private javax.swing.JTextField txtMesremito;
     // End of variables declaration//GEN-END:variables
 }
