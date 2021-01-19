@@ -69,7 +69,7 @@ public class CRUDclientes extends javax.swing.JFrame {
                   LimpiarTabla();
                   listar();
               } catch (Exception e) {
-                  System.out.println(e);
+                  System.err.println(e);
               }
               
           }

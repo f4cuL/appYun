@@ -17,7 +17,7 @@ public class Conexion {
             Class.forName("com.mysql.jdbc.Driver");
             con = DriverManager.getConnection("jdbc:mysql://localhost:3306/registro","root","");
         } catch (Exception e) {
-            System.out.println(e);
+            System.out.println("Erorr en base de datos "+e);
         }
     }  
     public Connection getConexion()
